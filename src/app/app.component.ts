@@ -8,10 +8,7 @@ import {Month} from "./month.model";
 })
 export class AppComponent implements OnInit {
   tilt = 23.43;
-  latitude = 0;
-  months = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"];
-
+  latitude = 34;
   monthsArray: Month[] = [];
   monthsDays = [31, 28, 31, 30, 31, 30,
     31, 31, 30, 31, 30, 31];
@@ -47,9 +44,9 @@ export class AppComponent implements OnInit {
     return this.latitude;
   }
 
-  clickEvent() {
+  resetEvent() {
     this.tilt = 23.43;
-    this.latitude = 0;
+    this.latitude = 34;
     this.inputChanged();
     this.clearCanvas();
   }
@@ -61,11 +58,7 @@ export class AppComponent implements OnInit {
         element.style.transform =
           'rotate(' + (this.tilt ? this.tilt : 0) + 'deg) ' +
           'translate(0px, ' + 0 + 'px)';
-      }/* else {
-        element.style.transform =
-          'rotate(' + (this.tilt ? this.tilt : 0) + 'deg) ' +
-          'translate(0px, ' + (this.latitude/Math.abs(this.latitude)) * 1.74 * -90 * Math.sqrt(1 - Math.pow(Math.abs(this.latitude) / 90 - 1, 2)) + 'px)';
-      }*/
+      }
       else {
         element.style.transform =
           'rotate(' + (this.tilt ? this.tilt : 0) + 'deg) ' +
@@ -74,7 +67,6 @@ export class AppComponent implements OnInit {
       let width = 100 * (1 - Math.abs(this.latitude) / 90);
       element.style.setProperty('width', '' + width + '%');
       element.style.setProperty('top', '' + (100 - 2 * width) + '%');
-//      element.style.setProperty('left', ''+(100-width) + '%');
     }
     element = document.getElementById('equator');
     if (element) {
@@ -83,8 +75,6 @@ export class AppComponent implements OnInit {
         'translate(0px, ' + 0 + 'px)';
       let width = 120;
       element.style.setProperty('width', '' + 5 * width + 'px');
-      //   element.style.setProperty('top', ''+ 0.5*(100-width) + '%');
-      //  element.style.setProperty('left', ''+ 0.5*(100-width) + '%');
     }
   }
 
@@ -111,7 +101,7 @@ export class AppComponent implements OnInit {
 
     let flag = 0;
     let flag2 = 0;
-    for (let x: number = -1; x <= 0.01; x += .01) {
+    for (let x: number = -1; x <= 0.01; x += .015) {
       t = 0 - Math.abs(.9 * s + (90 - .9 * this.latitude) / 90 - 1) + .9;
       b = Math.abs(.9 * s + (90 + .9 * this.latitude) / 90 - 1) - .9;
       f = (1.8 / Math.PI) * Math.asin(Math.sin(((t - b) / 1.8) * Math.PI / 2) * Math.sin(Math.PI * (x + .5))) + (t + b) / 2;
@@ -228,65 +218,73 @@ export class AppComponent implements OnInit {
   }
 
   drawBackground(f: number, x: number) {
+
     this.coloringStrength = 1 - Math.sqrt(1 - Math.pow(Math.abs(f) / .9 - 1, 2));
+    let greenStrength = Math.sqrt(Math.sqrt(1 - Math.pow(Math.abs(f / .9) - 1, 2)));
+    let blueStrength = Math.sqrt(1 - Math.pow(Math.abs(f / .9) - 1, 2));
 
     let c = <HTMLCanvasElement>document.getElementById("myCanvas");
     let ctx = c.getContext("2d");
     if (ctx) {
-      ctx.lineWidth = 7;
+      ctx.lineWidth = 8;
       let red = 0;
       let green = 0;
       let blue = 0;
       let brightness = 0;
+
+      let regularGreen = 0;
+      let regularBlue = 0;
+      let horizonRed = 0;
+      let horizonGreen = 0;
+      let horizonBlue = 0;
+
       let rgb = "rgb(" + red + "," + green + "," + blue + ")";
+
+      if (f < 0 && f >= -.18) {
+        brightness = Math.sin(Math.PI * (0.5 * (f / .9 + .18) / .18 - 0.5)) + 1;
+        regularGreen = .5 * brightness * 191;
+        regularBlue = .5 * brightness * 255;
+
+        horizonRed = (1 - this.coloringStrength) * brightness * 135 / 2
+          + this.coloringStrength * 255 * brightness;
+        horizonGreen = (1 - this.coloringStrength) * brightness * 206 / 2
+          + this.coloringStrength * greenStrength * 255 * brightness;
+        horizonBlue = (1 - this.coloringStrength) * brightness * 235 / 2
+          + this.coloringStrength * blueStrength * 255 * brightness;
+
+      } else if (f >= 0) {
+        brightness = Math.sin(.5 * Math.PI * f / .9);
+        regularGreen = 0.5 * 191 * brightness + 0.5 * 191;
+        regularBlue = 0.5 * 255 * brightness + 0.5 * 255;
+
+        horizonRed = (1 - this.coloringStrength) * (.5 * 135 + .5 * (135 * brightness))
+          + this.coloringStrength * 255;
+        horizonGreen = (1 - this.coloringStrength) * (.5 * 206 + .5 * (206 * brightness))
+          + this.coloringStrength * greenStrength * 255;
+        horizonBlue = (1 - this.coloringStrength) * (.5 * 235 + .5 * (235 * brightness))
+          + this.coloringStrength * blueStrength * 255;
+
+      }
+
+
       if (f >= -.18) {
-        for (let i = 0; i < c.height / 2; i += 5) {
+        for (let i = 0; i < c.height / 2; i += 7.5) {
           let verticalGradient = 1 - Math.sqrt(1 - Math.pow(i / (.5 * c.height), 2));
-          if (f < 0 && f >= -.18) {
-            brightness = 2 * Math.sin((1 / .18) * (f + .18) * Math.PI / 2 - Math.PI / 2) + 2;
+          red = horizonRed * verticalGradient;
+          green = regularGreen * (1 - verticalGradient) + horizonGreen * verticalGradient;
+          blue = regularBlue * (1 - verticalGradient) + horizonBlue * verticalGradient;
 
-            let temp = 135 * verticalGradient;
-            red = (1 - verticalGradient * this.coloringStrength) * (.25 * brightness * temp)
-              + .5 * brightness * verticalGradient * this.coloringStrength * 255;
 
-            temp = 191 + 15 * verticalGradient;
-            green = (1 - verticalGradient * this.coloringStrength) * (.25 * brightness * temp)
-              + .5 * brightness * verticalGradient * this.coloringStrength * 255
-              * Math.sqrt(Math.sqrt(1 - Math.pow(Math.abs(f / .9) - 1, 2)));
-
-            temp = 255 - 20 * verticalGradient;
-            blue = (1 - verticalGradient * this.coloringStrength) * (.25 * brightness * temp)
-              + .5 * brightness * verticalGradient * this.coloringStrength * 255
-              * Math.sqrt(1 - Math.pow(Math.abs(f / .9) - 1, 2));
-
-          } else {
-            brightness = Math.sin(.5 * Math.PI * f / .9);
-
-            let temp = 135 * (1 - Math.sqrt(1 - Math.pow(i / (.5 * c.height), 2)));
-            red = (1 - verticalGradient * this.coloringStrength) * (.5 * brightness * temp + .5 * temp)
-              + verticalGradient * this.coloringStrength * 255;
-
-            temp = 191 + 15 * verticalGradient;
-            green = (1 - verticalGradient * this.coloringStrength) * (.5 * brightness * temp + .5 * temp)
-              + verticalGradient * this.coloringStrength * 255
-              * Math.sqrt(Math.sqrt(1 - Math.pow(f / .9 - 1, 2)));
-
-            temp = 255 - 20 * verticalGradient;
-            blue = (1 - verticalGradient * this.coloringStrength) * (.5 * brightness * temp + .5 * temp)
-              + verticalGradient * this.coloringStrength * 255
-              * Math.sqrt(1 - Math.pow(f / .9 - 1, 2));
-
-          }
           rgb = "rgb(" + red + "," + green + "," + blue + ")";
           ctx.strokeStyle = rgb;
           ctx.beginPath();
           ctx.moveTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i);
-          ctx.lineTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i + 5);
+          ctx.lineTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i + 8);
           ctx.stroke();
 
           ctx.beginPath();
           ctx.moveTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i);
-          ctx.lineTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i + 5);
+          ctx.lineTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i + 8);
           ctx.stroke();
         }
       } else {      // it must be negative and below -18
@@ -306,29 +304,64 @@ export class AppComponent implements OnInit {
       red = 0;
       green = 94 / 4;
       blue = 255 / 4;
-      brightness = 0;
 
       if (f < 0 && f >= -.18) {
-        brightness = 2 * Math.sin((1 / .18) * (f + .18) * Math.PI / 2 - Math.PI / 2) + 1;
-        green = Math.max(94 / 4 + brightness * 94 / 4, 94 / 4);
-        blue = Math.max(255 / 4 + brightness * 255 / 4, 255 / 4);
-      }
-      if (f >= 0) {
-        brightness = Math.sin(.5 * Math.PI * f / .9);
-        green = 94 / 2 + 2 * brightness * 94 / 4;
-        blue = 255 / 2 + 2 * brightness * 255 / 4;
-      }
-      rgb = "rgb(" + red + "," + green + "," + blue + ")";
-      ctx.strokeStyle = rgb;
-      ctx.beginPath();
-      ctx.moveTo(x * this.CANV_WIDTH + this.CANV_WIDTH, c.height / 2);
-      ctx.lineTo(x * this.CANV_WIDTH + this.CANV_WIDTH, c.height);
-      ctx.stroke();
+        brightness = Math.sin(Math.PI * (0.5 * (f / .9 + .18) / .18 - 0.5)) + 1;
+        regularGreen = Math.max(greenStrength * brightness * 94 / 2, 94 / 4);
+        regularBlue = Math.max(blueStrength * brightness * 255 / 2, 255 / 4);
 
-      ctx.beginPath();
-      ctx.moveTo(this.CANV_WIDTH - x * this.CANV_WIDTH, c.height / 2);
-      ctx.lineTo(this.CANV_WIDTH - x * this.CANV_WIDTH, c.height);
-      ctx.stroke();
+        horizonRed = (1 - this.coloringStrength) * .5 * brightness * brightness * 135 / 2
+          + this.coloringStrength * 255 * brightness;
+        horizonGreen = (1 - this.coloringStrength) * .5 * brightness * brightness * 206 / 2 + (1 - .5 * brightness) * regularGreen
+          + this.coloringStrength * greenStrength * 255 * brightness;
+        horizonBlue = (1 - this.coloringStrength) * .5 * brightness * brightness * 235 / 2 + (1 - .5 * brightness) * regularBlue
+          + this.coloringStrength * blueStrength * 255 * brightness;
+
+      } else if (f >= 0) {
+        brightness = Math.sin(.5 * Math.PI * f / .9);
+        regularGreen = (94 / 4) + brightness * (3 * greenStrength * 94 / 8 + 3 * 94 / 8);
+        regularBlue = (255 / 4) + brightness * (3 * blueStrength * 255 / 8 + 3 * 255 / 8);
+
+        horizonRed = (1 - this.coloringStrength) * (.5 + .5 * brightness) * (.5 * 135 + .5 * (135 * brightness))
+          + this.coloringStrength * 255;
+        horizonGreen = (1 - this.coloringStrength) * ((.5 + .5 * brightness) * (.5 * 206 + .5 * (206 * brightness)) + (.5 - .5 * brightness) * regularGreen)
+          + this.coloringStrength * greenStrength * 255;
+        horizonBlue = (1 - this.coloringStrength) * ((.5 + .5 * brightness) * (.5 * 235 + .5 * (235 * brightness)) + (.5 - .5 * brightness) * regularBlue)
+          + this.coloringStrength * blueStrength * 255;
+
+      }
+      if (f >= -.18) {
+        for (let i = c.height / 2; i < c.height; i += 7.5) {
+          let verticalGradient = 1 - Math.sqrt(1 - Math.pow(1 - (i - .5 * c.height) / (.5 * c.height), 2));
+          red = horizonRed * verticalGradient;
+          green = regularGreen * (1 - verticalGradient) + horizonGreen * verticalGradient;
+          blue = regularBlue * (1 - verticalGradient) + horizonBlue * verticalGradient;
+
+          rgb = "rgb(" + red + "," + green + "," + blue + ")";
+          ctx.strokeStyle = rgb;
+          ctx.beginPath();
+          ctx.moveTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i);
+          ctx.lineTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i + 8);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i);
+          ctx.lineTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i + 8);
+          ctx.stroke();
+        }
+      } else {
+        rgb = "rgb(" + red + "," + green + "," + blue + ")";
+        ctx.strokeStyle = rgb;
+        ctx.beginPath();
+        ctx.moveTo(x * this.CANV_WIDTH + this.CANV_WIDTH, c.height / 2);
+        ctx.lineTo(x * this.CANV_WIDTH + this.CANV_WIDTH, c.height);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(this.CANV_WIDTH - x * this.CANV_WIDTH, c.height / 2);
+        ctx.lineTo(this.CANV_WIDTH - x * this.CANV_WIDTH, c.height);
+        ctx.stroke();
+      }
     }
   }
 }

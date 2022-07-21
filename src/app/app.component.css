@@ -9,8 +9,8 @@
 }
 
 #rectangle {
-  height:400px;
-  width:0;
+  height: 400px;
+  width: 0;
   position: absolute;
   left: 0;
   right: 0;
@@ -22,8 +22,8 @@
 }
 
 #darkRectangle {
-  height:400px;
-  width:100%;
+  height: 400px;
+  width: 100%;
   position: absolute;
   left: 0;
   right: 0;
@@ -35,9 +35,9 @@
 }
 
 #groundRectangle {
-  height:200px;
-  transform: translate(0,100px);
-  width:100%;
+  height: 200px;
+  transform: translate(0, 100px);
+  width: 100%;
   position: absolute;
   left: 0;
   right: 0;
@@ -49,9 +49,9 @@
 }
 
 #darkGroundRectangle {
-  height:200px;
-  transform: translate(0,100px);
-  width:100%;
+  height: 200px;
+  transform: translate(0, 100px);
+  width: 100%;
   position: absolute;
   left: 0;
   right: 0;
@@ -65,8 +65,8 @@
 
 
 #myCanvas {
-  height:400px;
-  width:100%;
+  height: 400px;
+  width: 100%;
   position: absolute;
   left: 0;
   right: 0;
@@ -77,14 +77,13 @@
 }
 
 
-
 .earth {
   width: 325px;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  position:absolute;
+  position: absolute;
   margin: auto;
 }
 
@@ -94,7 +93,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  position:absolute;
+  position: absolute;
   margin: auto;
   opacity: 0.1875;
   transform: rotate(90deg);
@@ -104,15 +103,17 @@
 #equator {
   opacity: 0;
 }
+
 #line-img {
   opacity: 1;
 }
+
 .line {
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  position:absolute;
+  position: absolute;
   margin: auto;
   z-index: 1;
 }

@@ -1,0 +1,103 @@
+<div class="container-fluid mt-3">
+  <h1>Homework Project</h1>
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="mb-3 mt-3">
+        <label for="tiltSlider">Axial tilt (obliquity):</label>
+        <input type="range" step="0.5" min="0" max="90" class="form-range" id="tiltSlider" [(ngModel)]="tilt"
+               (ngModelChange)="inputChanged($event)">
+      </div>
+      <div class="mb-3">
+        <label for="latSlider">Latitude:</label>
+        <input type="range" step="0.5" min="-90" max="90" class="form-range" id="latSlider" [(ngModel)]="latitude"
+               (ngModelChange)="inputChanged($event)">
+      </div>
+      <div class="mb-3">
+        <label for="dateSlider">Day of the year:</label>
+        <input type="range" step="1" min="1" max="365" class="form-range" id="dateSlider" [(ngModel)]="date"
+               (ngModelChange)="updateMonthDay($event)">
+      </div>
+
+
+    </div>
+
+
+    <div class="col-sm-2">
+
+      <div class="mb-3 mt-3">
+        <input class="form-control" type="number" [(ngModel)]="tilt">
+      </div>
+
+      <div class="mb-3">
+        <input class="form-control" type="number" [(ngModel)]="latitude" (ngModelChange)="inputChanged($event)">
+      </div>
+
+      <br>
+
+      <form>
+        <div class="row">
+          <div class="col-sm-7">
+            <select class="form-select" [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedMonth"
+                    #monthsSelect (change)="updateDate(monthsSelect.value)">
+              <option *ngFor="let m of monthsArray; let i = index" [ngValue]="m"
+                      [selected]="m===selectedMonth">
+                {{m.name}}
+              </option>
+            </select>
+          </div>
+          <div class="col-sm-5">
+            <input (ngModelChange)="updateDate()" class="form-control" min="1" max="31" type="number"
+                   [(ngModel)]="dayNum" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+      </form>
+      Day of the year = {{getDate()}}
+      <br>
+
+    </div>
+
+    <div class="col-sm-2">
+      <div class="mb-3 mt-3">
+        <button (click)="clickEvent()" type="button" class="btn btn-primary">Reset</button>
+      </div>
+    </div>
+
+
+    <div class="col-sm-4">
+
+      <div class="images">
+        <img class="line" id="line-img" src="../assets/line.png"/>
+        <img class="earth" id="earth-img" src="../assets/earth.png"
+             [style.transform]="'rotate(' + (tilt ? tilt: 0) + 'deg)'"/>
+        <img class="earth2" src="../assets/halfcircle.png"/>
+        <!-- <img class="line" src="../assets/line.png" [style.transform]="'rotate(' + (var1 ? var1: 0) + 'deg)'"/> -->
+
+        <img class="line" id="equator" style="filter: saturate(0); z-index:1" src="../assets/line.png"/>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <div class="row">
+    <br><br><br><br><br><br><br><br><br><br>
+    <h2 style="text-align: center">Day length: {{formatTime()}}</h2>
+  </div>
+  <div class="row" style="position: relative">
+
+  </div>
+  <br><br>
+  <br>
+  <div style="position:relative">
+    <img id="rectangle" src="../assets/skyrectangle.png"/>
+    <img id="groundRectangle" src="../assets/groundrectangle.png"/>
+    <img id="darkRectangle" src="../assets/skyrectangle.png"/>
+    <img id="darkGroundRectangle" src="../assets/groundrectangle.png"/>
+    <canvas id="myCanvas" width=1000 height=250 style="border:1px solid gray">
+    </canvas>
+  </div>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
+</div>
+
+

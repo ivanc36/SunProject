@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
   sunGreen = 0;
   sunBlue = 0;
   coloringStrength = 0;
+  seasonalTilt = 0;
   private readonly CANV_WIDTH = 500;
 
   ngOnInit() {
@@ -54,28 +55,23 @@ export class AppComponent implements OnInit {
   inputChanged($event?: any) {
     let element = document.getElementById('line-img');
     if (element) {
-      if (this.latitude == 0) {
-        element.style.transform =
-          'rotate(' + (this.tilt ? this.tilt : 0) + 'deg) ' +
-          'translate(0px, ' + 0 + 'px)';
-      }
-      else {
-        element.style.transform =
-          'rotate(' + (this.tilt ? this.tilt : 0) + 'deg) ' +
-          'translate(0px, ' + 0 + 'px)';
-      }
-      let width = 100 * (1 - Math.abs(this.latitude) / 90);
-      element.style.setProperty('width', '' + width + '%');
-      element.style.setProperty('top', '' + (100 - 2 * width) + '%');
-    }
-    element = document.getElementById('equator');
-    if (element) {
       element.style.transform =
-        'rotate(' + (this.tilt ? this.tilt + 90 : 90) + 'deg) ' +
+        'rotate(' + (this.tilt ? this.tilt : 0) + 'deg) ' +
         'translate(0px, ' + 0 + 'px)';
-      let width = 120;
-      element.style.setProperty('width', '' + 5 * width + 'px');
+
+
+      let width = 100 * (1 - Math.abs(this.latitude) / 90);
+      let vertDisplacement = 0;
+      if (this.latitude > 0) {
+        vertDisplacement = Math.sqrt(1 - Math.pow(this.latitude / 90 - 1, 2));
+      } else if (this.latitude < 0) {
+        vertDisplacement = 0 - Math.sqrt(1 - Math.pow(this.latitude / 90 + 1, 2));
+      }
+      element.style.setProperty('width', '' + 0.58 * width + '%');
+      element.style.setProperty('top', '' + Math.cos(Math.PI * this.tilt / 180) * (0 - 132 * vertDisplacement - 0.5) + '%');
+      element.style.setProperty('left', '' + Math.sin(Math.PI * this.tilt / 180) * (57.5 * vertDisplacement + 0.5) + '%');
     }
+
   }
 
   updateDate(m?: any) {
@@ -148,6 +144,13 @@ export class AppComponent implements OnInit {
   }
 
   getDate($event?: any) {
+    let element = document.getElementById('halfCircle-img');
+    this.seasonalTilt = 90 * this.calculateSFrom0To6();
+    if (element) {
+      element.style.transform =
+        'rotate(' + (this.seasonalTilt ? this.seasonalTilt + 90+this.tilt : 90+this.tilt) + 'deg) ' +
+        'translate(0px, ' + -100 + 'px)';
+    }
     return this.date;
   }
 

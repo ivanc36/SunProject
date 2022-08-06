@@ -21,7 +21,6 @@
     </div>
 
     <div class="col-sm-2">
-
       <div class="mb-3 mt-3">
         <input class="form-control" type="number" [(ngModel)]="tilt">
       </div>
@@ -65,10 +64,8 @@
         <img class="line" id="line-img" src="../assets/line.png"/>
         <img class="earth" id="earth-img" src="../assets/earth.png"
              [style.transform]="'rotate(' + (tilt ? tilt: 0) + 'deg)'"/>
-        <img class="earth2" src="../assets/halfcircle.png"/>
+        <img class="halfCircle" id="halfCircle-img" src="../assets/halfcircle.png"/>
         <!-- <img class="line" src="../assets/line.png" [style.transform]="'rotate(' + (var1 ? var1: 0) + 'deg)'"/> -->
-
-        <img class="line" id="equator" style="filter: saturate(0); z-index:1" src="../assets/line.png"/>
       </div>
     </div>
   </div>
@@ -84,10 +81,6 @@
   <br><br>
   <br>
   <div style="position:relative">
-    <img id="rectangle" src="../assets/skyrectangle.png"/>
-    <img id="groundRectangle" src="../assets/groundrectangle.png"/>
-    <img id="darkRectangle" src="../assets/skyrectangle.png"/>
-    <img id="darkGroundRectangle" src="../assets/groundrectangle.png"/>
     <canvas id="myCanvas" width=1000 height=250 style="border:1px solid gray">
     </canvas>
   </div>

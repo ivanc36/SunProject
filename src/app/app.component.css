@@ -38,7 +38,7 @@
   position: absolute;
   margin: auto;
   opacity: .875;
-  box-shadow: 0px 0px 30px 30px #000;
+  box-shadow: 0 0 30px 30px #000;
   /* in order: x offset, y offset, blur size, spread size, color */
   /* blur size and spread size are optional (they default to 0) */
 }

@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
       } else if (this.latitude < 0) {
         vertDisplacement = 0 - Math.sqrt(1 - Math.pow(this.latitude / 90 + 1, 2));
       }
-      element.style.setProperty('width', '' + 0.58 * width + '%');
+      element.style.setProperty('width', '' + 0.58 * width + 'px');
       element.style.setProperty('top', '' + Math.cos(Math.PI * this.tilt / 180) * (0 - 132 * vertDisplacement - 0.5) + '%');
       element.style.setProperty('left', '' + Math.sin(Math.PI * this.tilt / 180) * (57.5 * vertDisplacement + 0.5) + '%');
     }

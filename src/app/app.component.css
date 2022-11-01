@@ -51,7 +51,7 @@
   position: absolute;
   margin: auto;
   z-index: 1;
-  opacity: .75;
+  opacity: 0;
 }
 
 .form-control {

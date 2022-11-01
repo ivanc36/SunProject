@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
   coloringStrength = 0;
   seasonalTilt = 0;
   private readonly CANV_WIDTH = 500;
+  private readonly CANV_HEIGHT = 125;
 
   ngOnInit() {
     this.inputChanged();
@@ -97,7 +98,7 @@ export class AppComponent implements OnInit {
 
     let flag = 0;
     let flag2 = 0;
-    for (let x: number = -1; x <= 0.01; x += .015) {
+    for (let x: number = -1; x <= 0.01; x += this.CANV_WIDTH / 33333.33) {
       t = 0 - Math.abs(.9 * s + (90 - .9 * this.latitude) / 90 - 1) + .9;
       b = Math.abs(.9 * s + (90 + .9 * this.latitude) / 90 - 1) - .9;
       f = (1.8 / Math.PI) * Math.asin(Math.sin(((t - b) / 1.8) * Math.PI / 2) * Math.sin(Math.PI * (x + .5))) + (t + b) / 2;
@@ -106,14 +107,14 @@ export class AppComponent implements OnInit {
     }
 
 
-    for (let x: number = -1; x <= 1; x += .002) {
+    for (let x: number = -1; x <= 1; x += this.CANV_WIDTH / 250000) {
       t = 0 - Math.abs(.9 * s + (90 - .9 * this.latitude) / 90 - 1) + .9;
       b = Math.abs(.9 * s + (90 + .9 * this.latitude) / 90 - 1) - .9;
       f = (1.8 / Math.PI) * Math.asin(Math.sin(((t - b) / 1.8) * Math.PI / 2) * Math.sin(Math.PI * (x + .5))) + (t + b) / 2;
 
       if (x === -1) {
         this.prevX = x * this.CANV_WIDTH + this.CANV_WIDTH;
-        this.prevY = 125 - f * 125 / .9;
+        this.prevY = this.CANV_HEIGHT - f * this.CANV_HEIGHT / .9;
       }
       if (f > 0 && flag === 0) {
         horizonCrossings[0] = x;
@@ -132,14 +133,6 @@ export class AppComponent implements OnInit {
 
     let diff = horizonCrossings[1] - horizonCrossings[0];
 
-    let element = document.getElementById('rectangle');
-    if (element) {
-      element.style.setProperty('width', '' + 50 * diff + '%');
-    }
-    element = document.getElementById('groundRectangle');
-    if (element) {
-      element.style.setProperty('width', '' + 50 * diff + '%');
-    }
     return Math.round(1000 * (diff) * 12) / 1000;
   }
 
@@ -176,14 +169,14 @@ export class AppComponent implements OnInit {
     f = f / .9;
     if (ctx) {
       let newX = x * this.CANV_WIDTH + this.CANV_WIDTH;
-      let newY = 125 - f * 125;
+      let newY = this.CANV_HEIGHT - f * this.CANV_HEIGHT;
 
       this.sunRed = f > 0 ? 255 : 127;
       this.sunGreen = f > 0 ? 255 * Math.sqrt(Math.sqrt(1 - Math.pow(f - 1, 2))) : 0;
       this.sunBlue = f > 0 ? 255 * Math.sqrt(1 - Math.pow(f - 1, 2)) : 0;
 
       ctx.strokeStyle = "rgb(" + this.sunRed + "," + this.sunGreen + "," + this.sunBlue + ")";
-      ctx.lineWidth = 10;
+      ctx.lineWidth = this.CANV_HEIGHT/12.5;
       ctx.beginPath();
       ctx.moveTo(this.prevX, this.prevY);
       ctx.lineTo(newX, newY);
@@ -229,7 +222,7 @@ export class AppComponent implements OnInit {
     let c = <HTMLCanvasElement>document.getElementById("myCanvas");
     let ctx = c.getContext("2d");
     if (ctx) {
-      ctx.lineWidth = 8;
+      ctx.lineWidth = c.width / 125;
       let red = 0;
       let green = 0;
       let blue = 0;
@@ -271,7 +264,7 @@ export class AppComponent implements OnInit {
 
 
       if (f >= -.18) {
-        for (let i = 0; i < c.height / 2; i += 7.5) {
+        for (let i = 0; i < c.height / 2; i += c.height / 33.333) {
           let verticalGradient = 1 - Math.sqrt(1 - Math.pow(i / (.5 * c.height), 2));
           red = horizonRed * verticalGradient;
           green = regularGreen * (1 - verticalGradient) + horizonGreen * verticalGradient;
@@ -282,12 +275,12 @@ export class AppComponent implements OnInit {
           ctx.strokeStyle = rgb;
           ctx.beginPath();
           ctx.moveTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i);
-          ctx.lineTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i + 8);
+          ctx.lineTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i + c.height/31.25);
           ctx.stroke();
 
           ctx.beginPath();
           ctx.moveTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i);
-          ctx.lineTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i + 8);
+          ctx.lineTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i + c.height/31.25);
           ctx.stroke();
         }
       } else {      // it must be negative and below -18
@@ -334,7 +327,7 @@ export class AppComponent implements OnInit {
 
       }
       if (f >= -.18) {
-        for (let i = c.height / 2; i < c.height; i += 7.5) {
+        for (let i = c.height / 2; i < c.height; i += c.height / 33.333) {
           let verticalGradient = 1 - Math.sqrt(1 - Math.pow(1 - (i - .5 * c.height) / (.5 * c.height), 2));
           red = horizonRed * verticalGradient;
           green = regularGreen * (1 - verticalGradient) + horizonGreen * verticalGradient;
@@ -344,12 +337,12 @@ export class AppComponent implements OnInit {
           ctx.strokeStyle = rgb;
           ctx.beginPath();
           ctx.moveTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i);
-          ctx.lineTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i + 8);
+          ctx.lineTo(x * this.CANV_WIDTH + this.CANV_WIDTH, i + c.height/31.25);
           ctx.stroke();
 
           ctx.beginPath();
           ctx.moveTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i);
-          ctx.lineTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i + 8);
+          ctx.lineTo(this.CANV_WIDTH - x * this.CANV_WIDTH, i + c.height/31.25);
           ctx.stroke();
         }
       } else {
